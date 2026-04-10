@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>集中力ブレイカー・チェッカー</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border: none; border-radius: 15px; }
+        .btn-primary { border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-danger">🚫 集中力ブレイカー</h1>
+        <p class="lead text-muted">何に時間を奪われたか記録して、集中力を取り戻そう。</p>
+    </div>
+
+    <div class="card shadow-sm mb-5">
+        <div class="card-body p-4">
+            <h5 class="card-title mb-4">今の邪魔を記録する</h5>
+            <form th:action="@{/add}" th:object="${newLog}" method="post" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">原因</label>
+                    <input type="text" th:field="*{cause}" class="form-control" placeholder="例: スマホ、猫、宅急便" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">カテゴリ</label>
+                    <select th:field="*{category}" class="form-select">
+                        <option value="SNS/ネット">SNS/ネット</option>
+                        <option value="身体的 (眠気・空腹)">身体的 (眠気・空腹)</option>
+                        <option value="外部要因 (来客・電話)">外部要因 (来客・電話)</option>
+                        <option value="娯楽 (テレビ・漫画)">娯楽 (テレビ・漫画)</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">失った時間</label>
+                    <div class="input-group">
+                        <input type="number" th:field="*{minutes}" class="form-control" placeholder="0" min="1" required>
+                        <span class="input-group-text">分</span>
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">記録する！</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm text-center">
+        <div class="card-body p-4">
+            <h5 class="card-title mb-4 text-start">邪魔された履歴</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>発生日時</th>
+                        <th>原因</th>
+                        <th>カテゴリ</th>
+                        <th>損失時間</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="log : ${logs}">
+                        <td th:text="${#temporals.format(log.createdAt, 'yyyy/MM/dd HH:mm')}"></td>
+                        <td class="fw-bold" th:text="${log.cause}"></td>
+                        <td>
+                            <span class="badge bg-secondary" th:text="${log.category}"></span>
+                        </td>
+                        <td>
+                            <span class="text-danger fw-bold" th:text="${log.minutes}"></span> 分
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(logs)}">
+                        <td colspan="4" class="text-muted py-4">まだ記録はありません。集中できていますね！</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
